@@ -7,10 +7,11 @@
  * It is provided "as is" without express or implied warranty.
  */
 
-//#include	"sock.h"
+
+#include <getopt.h>
 
 #include "ourhdr.h"
-#include <getopt.h>
+#include "sock.h"
 
 /* define global variables */
 char	*host;
@@ -219,15 +220,15 @@ main(int argc, char *argv[])
 			usage("missing <port>");
 	}
 
-	if (client);
-		//fd = cliopen(host, port);
-	else;
-		//fd = servopen(host, port);
+	if (client)
+		fd = cliopen(host, port);
+	else
+		fd = servopen(host, port);
 
-	if (sourcesink);
-		//sink(fd);			/* ignore stdin/stdout */
-	else;
-		//loop(fd);			/* copy stdin/stdout to/from socket */
+	if (sourcesink)
+		sink(fd);			/* ignore stdin/stdout */
+	else
+		loop(fd);			/* copy stdin/stdout to/from socket */
 
 	exit(0);
 }

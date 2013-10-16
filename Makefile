@@ -18,10 +18,12 @@ LIBS	= -lnsl
 #LIBS	=
 
 PROGS =	sock
-OBJS = error.o cliopen.o sockopts.o buffers.c main.o
+OBJS = error.o cliopen.o sockopts.o buffers.c sourcesink.o servopen.o \
+	   tellwait.o loop.o crlf.o writen.o\
+	   main.o
 
 #这些文件不再需要了，linux已经有这些函数库了
-#strerror.o writen.o  
+#strerror.o 
 
 #OBJS = buffers.o cliopen.o crlf.o error.o loop.o main.o \
 	   servopen.o sockopts.o sourcesink.o strerror.o \
