@@ -7,10 +7,10 @@
  * It is provided "as is" without express or implied warranty.
  */
 
-#include	"sock.h"
+#include "sock.h"
 
-int
-cliopen(char *host, char *port)
+//客户端模式由这个函数实现
+int cliopen(char *host, char *port)
 {
 	int					fd, i, on;
 	char				*protocol;
@@ -32,13 +32,14 @@ cliopen(char *host, char *port)
 
 		serv_addr.sin_port = sp->s_port;
 	} else
-		serv_addr.sin_port = htons(i);
+		serv_addr.sin_port = htons(i);//主机字节序变成网络字节序
 
 	/*
 	 * First try to convert the host name as a dotted-decimal number.
 	 * Only if that fails do we call gethostbyname().
 	 */
-
+    //转化host字符串为ip地址
+    //转化有问题时，尝试gethostbyname
 	if ( (inaddr = inet_addr(host)) != INADDR_NONE) {
 						/* it's dotted-decimal */
 		bcopy((char *) &inaddr, (char *) &serv_addr.sin_addr, sizeof(inaddr));
@@ -50,9 +51,14 @@ cliopen(char *host, char *port)
 		bcopy(hp->h_addr, (char *) &serv_addr.sin_addr, hp->h_length);
 	}
 
+    //创建socket
+    //根据参数选择是udp还是tcp
 	if ( (fd = socket(AF_INET, udp ? SOCK_DGRAM : SOCK_STREAM, 0)) < 0)
 		err_sys("socket() error");
 
+    //重用端口地址
+    //如果你的服务程序停止后想立即重启，而新套接字依旧使用同一端口，
+    //此时SO_REUSEADDR 选项非常有用。
 	if (reuseaddr) {
 		on = 1;
 		if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR,
@@ -81,7 +87,8 @@ cliopen(char *host, char *port)
 	 * TCP options (window scale, etc.).
 	 */
 
-	buffers(fd);
+	buffers(fd);//申请读写buffer以及套接字的滑动窗口
+    //设置socket选项getsockopt & setsockopt
 	sockopts(fd, 0);	/* may also want to set SO_DEBUG */
 
 	/*
@@ -91,6 +98,7 @@ cliopen(char *host, char *port)
 	if (connect(fd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
 		err_sys("connect() error");
 
+    //需要提示么
 	if (verbose) {
 			/* Call getsockname() to find local address bound to socket:
 			   TCP ephemeral port was assigned by connect() or bind();

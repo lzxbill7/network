@@ -29,6 +29,7 @@ buffers(int sockfd)
 		/* Set the socket send and receive buffer sizes (if specified).
 		   The receive buffer size is tied to TCP's advertised window. */
 
+    //设置滑动窗口buffer
 	if (rcvbuflen) {
 		if (setsockopt(sockfd, SOL_SOCKET, SO_RCVBUF, (char *) &rcvbuflen,
 													sizeof(rcvbuflen)) < 0)
